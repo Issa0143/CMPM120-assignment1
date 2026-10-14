@@ -6,7 +6,11 @@ class Start extends Scene {
 
     handleNavigation() {
         var start = this.engine.storyData.start;
-        this.engine.gotoScene(Room, start.x, start.y, {"items": {}, "steps": 0});
+        this.engine.gotoScene(Room, start.x, start.y, {
+            "items": {},
+            "collected": {},
+            "steps": 0
+        });
     }
 }
 
@@ -20,13 +24,13 @@ class Room extends Scene {
         var roomData = this.engine.storyData.rooms[x + "_" + y];
         this.engine.showCaption(roomData.name);
         this.engine.show(roomData.description);
-        this.interactions(player.items, roomData.items);
         player.steps += 1;
         if (roomData.items.length > 0)
         {
             var items = "Items collected: ";
             for(var item of roomData.items)
             {
+                player.collected[item] = true;
                 items += this.engine.itemString(item) + " ";
                 if (player.items[item])
                 {
@@ -45,7 +49,9 @@ class Room extends Scene {
             this.engine.show("No items left to collect. Have you already been here?");
         }
 
-        if (this.engine.storyData.exit.x == x && this.engine.storyData.exit.y == y)
+        let end = this.engine.storyData.end || this.engine.storyData.exit;
+
+        if (end.x == x && end.y == y)
         {
             this.endGame(player);
         }
@@ -60,8 +66,19 @@ class Room extends Scene {
     {
             if (player.items["newspaper"] > 0)
             {
-                this.e
+                this.engine.addInteraction("Read newspaper", "readNewspaper");
             }
+
+            if (player.items["cat2"] > 0 && player.items["pie"] > 0)
+            {
+                this.engine.addInteraction("Offer pie to cat", "feedCat");
+            }
+
+            if (player.items["banana"] > 0 && player.items["giraffe"] > 0)
+            {
+                this.engine.addInteraction("Feed banana to giraffe", "feedGiraffe");
+            }
+
             // navigation cells come in a 3x3 grid
             // row 1
             this.engine.addTextCell();
@@ -102,22 +119,35 @@ class Room extends Scene {
                 return;
             }
         }
+
+        for (let item of requirements)
+        {
+            player.items[item] -= 1;
+
+            if (player.items[item] === 0)
+            {
+                delete player.items[item];
+            }
+        }
+
+        destination.requires = [];
         
         this.engine.gotoScene(Room, x, y, player);
     }
 
-    handleInteraction(a,b)
+    handleInteraction(action)
     {
-        if (a == "x" && b == "y") {
-            this.engine.show("Interaction successful!");
-        }
-    }
-
-    interactions(inventory, roomItems)
-    {
-        if (inventory["cat2"] > 0 && roomItems.includes("pie"))
+        if (action === "readNewspaper")
         {
-            this.engine.show("Your cat catches the scent of fresh pie and leaps into the table. It slides a paw toward the crust, then freezes when you look over, pretending it was only stretching.");
+            this.engine.show("You unfold the newspaper. A handwritten note reads: 'Explore every passage carefully. Items found in one room may unlock another, and each item used to unlock a room is consumed. Once opened, that room stays unlocked.'");
+        }
+        else if (action === "feedCat")
+        {
+            this.engine.show("You offer a small piece of pie to your cat. It sniffs the crust, takes a bite, and curls up beside you with a satisfied purr.");
+        }
+        else if (action === "feedGiraffe")
+        {
+            this.engine.show("You hold out a banana, and the giraffe lowers its long neck to investigate. It gently takes the fruit and nudges your shoulder as if asking for another.");
         }
     }
 
@@ -131,10 +161,12 @@ class Room extends Scene {
         }
         this.engine.show(items);
         this.engine.show("Total steps taken: " + player.steps);
-        let score = Object.keys(player.items).length /player.steps;
+        let itemPoints = Object.keys(player.collected).length * 10;
+        let exitBonus = 50;
+        let score = Math.max(0, itemPoints + exitBonus - player.steps);
         this.engine.show("Your score is: " + score);
         this.engine.show(this.engine.storyData.credits);
     }
 }
 
-Engine.load(Start, './myWorld.json');
+Engine.load(Start, './myworld.json');

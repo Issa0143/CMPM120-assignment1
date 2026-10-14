@@ -1,43 +1,43 @@
 {
-    "title": "A grid-based world.",
-    "credits": "Created by Markus Eger (meger@ucsc.edu).",
+    "title": "The Silent Reserve",
+    "credits": "World and gameplay additions by Josue Aguilar Mejia. Based on the framework by Markus Eger (meger@ucsc.edu).",
     "start": {"x": 0, "y": 0},
     "exit": {"x": 2, "y": 2},
     "rooms": {
         "0_0": {
-            "name": "Entrance",
+            "name": "Reserve Entrance",
             "description": "Welcome to the entrance.",
             "items": ["cat2", "banana", "coconut"]
         },
         "1_0": {
-            "name": "Hallway",
+            "name": "Overgrown Trail",
             "description": "An almost empty hallway.",
             "items": ["bone"]
         },
         "0_1": {
-            "name": "The sitting room",
+            "name": "Abandoned Visitor Center",
             "description": "Two couches next to a coffee table.",
             "items": ["coffee", "newspaper", "key"]
         },
         "2_0": {
-            "name": "Main Hall",
-            "description": "The main area of the house",
+            "name": "Locked Observation Hut",
+            "description": "The main area of the Reserve",
             "items": ["cat2", "vampire", "telephone", "nazar_amulet"],
             "requires": ["key"]
         },
         "0_2": {
-            "name": "Kitchen",
+            "name": "Wildlife Feeding Station",
             "description": "A very fancy kitchen. It smells like pine cones for some reason.",
             "items": ["cat2", "broccoli", "pie", "pretzel"],
             "requires": ["nazar_amulet"]
         },
         "1_2": {
-            "name": "Pantry",
+            "name": "Animal Shelter",
             "description": "There should be food stored here, but you find something else instead.",
             "items": ["giraffe", "hammer"]
         },
         "2_2": {
-            "name": "Treasure room",
+            "name": "Ranger Station",
             "description": "You have made it to your destination! Let's count how many treasures you were able to collect on your way here.",
             "items": []
         }
