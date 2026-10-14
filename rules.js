@@ -15,6 +15,8 @@ class Room extends Scene {
     {
         this.x = x;
         this.y = y;
+        this.player = player;
+
         var roomData = this.engine.storyData.rooms[x + "_" + y];
         this.engine.showCaption(roomData.name);
         this.engine.show(roomData.description);
@@ -49,7 +51,17 @@ class Room extends Scene {
         }
         else
         {
-            this.engine.addInteraction("Do something", "x", "y");
+            this.showControls(x, y, player);
+        }
+        this.engine.transition();
+    }
+
+    showControls(x, y, player)
+    {
+            if (player.items["newspaper"] > 0)
+            {
+                this.e
+            }
             // navigation cells come in a 3x3 grid
             // row 1
             this.engine.addTextCell();
@@ -77,10 +89,20 @@ class Room extends Scene {
             else
                 this.engine.addTextCell();
             this.engine.addTextCell();
-        }
-        this.engine.transition();
     }
+
     handleNavigation(x,y,player) {
+        let destination = this.engine.storyData.rooms[x + "_" + y];
+        let requirements = destination.requires || [];
+
+        for (let item of requirements) {
+            if (!(player.items[item] > 0)) {
+                this.engine.show("This room is locked. You need: " + item);
+                this.showControls(this.x, this.y, player);
+                return;
+            }
+        }
+        
         this.engine.gotoScene(Room, x, y, player);
     }
 
@@ -93,6 +115,10 @@ class Room extends Scene {
 
     interactions(inventory, roomItems)
     {
+        if (inventory["cat2"] > 0 && roomItems.includes("pie"))
+        {
+            this.engine.show("Your cat catches the scent of fresh pie and leaps into the table. It slides a paw toward the crust, then freezes when you look over, pretending it was only stretching.");
+        }
     }
 
     endGame(player)
